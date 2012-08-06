@@ -1,9 +1,14 @@
 {
   "name": "msonnabaum/keyvaluestore",
-  "description": "",
   "type": "library",
+  "description": "KeyValueStore Component",
+  "keywords": ["keyvalue", "nosql"],
+  "homepage": "https://github.com/msonnabaum/KeyValueStore",
+  "license": "MIT",
   "require": {
-    "php": ">=5.3.0",
+    "php": ">=5.3.3"
+  },
+  "require-dev": {
     "symfony/yaml": ">=2.0.12"
   },
   "autoload": {

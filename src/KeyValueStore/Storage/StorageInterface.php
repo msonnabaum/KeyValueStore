@@ -2,78 +2,96 @@
 
 /**
  * @file
- * Definition of StorageInterface.
+ * Contains KeyValueStore\Storage\StorageInterface.
  */
 
 namespace KeyValueStore\Storage;
 
 /**
- * Defines an interface for key/value implementations.
- *
+ * Defines the interface for key/value store implementations.
  */
 interface StorageInterface {
   /**
    * Constructs a new key/value collection.
    *
-   * @param $collection
+   * @param string $collection
    *   The collection for which the object is created.
-   * @param $options
+   * @param array $options
+   *   An associative array of options for the key/value storage collection.
    */
-  function __construct($collection, array $options);
+  public function __construct($collection, array $options);
 
   /**
-   * Returns data from the key/value store.
+   * Returns the name of this collection.
+   *
+   * @return string
+   *   The name of this collection.
+   */
+  public function getCollectionName();
+
+  /**
+   * Returns the stored value for a given key.
    *
    * @param $key
    *   The key of the data to retrieve.
    *
-   * @return
-   *   The value or FALSE on failure.
+   * @return mixed
+   *   The stored value, or FALSE if no value exists.
    */
-  function get($key);
+  public function get($key);
 
   /**
-   * Returns data from the key/value store when given an array of keys.
+   * Returns the stored key/value pairs for a given set of keys.
    *
-   * @param $keys
-   *   An array of keys for the data to retrieve.
+   * @param array $keys
+   *   A list of keys to retrieve.
    *
-   * @return
-   *   An array of the items successfully returned, indexed by key.
+   * @return array
+   *   An associative array of items successfully returned, indexed by key.
+   *   @todo What's returned for non-existing keys?
    */
-  function getMultiple($keys);
+  public function getMultiple(array $keys);
 
   /**
-   * Stores data in the key/value store.
+   * Returns all stored key/value pairs in the collection.
    *
-   * @param $key
+   * @return array
+   *   An associative array containing all stored items in the collection.
+   */
+  public function getAll();
+
+  /**
+   * Saves a value for a given key.
+   *
+   * @param string $key
    *   The key of the data to store.
-   * @param $value
+   * @param mixed $value
    *   The data to store.
    */
-  function set($key, $value);
+  public function set($key, $value);
 
   /**
-   * Stores data in the key/value store.
+   * Saves key/value pairs.
    *
-   * @param $data
-   *   An array of key/value pairs.
+   * @param array $data
+   *   An associative array of key/value pairs.
    */
-  function setMultiple($data);
+  public function setMultiple(array $data);
 
   /**
-   * Deletes an item.
+   * Deletes an item from the key/value store.
    *
-   * @param $key
-   *    The key to delete.
+   * @param string $key
+   *   The item name to delete.
    */
-  function delete($key);
+  public function delete($key);
 
   /**
    * Deletes multiple items from the key/value store.
    *
-   * @param $keys
-   *   An array of $keys to delete.
+   * @param array $keys
+   *   A list of item names to delete.
    */
-  function deleteMultiple(Array $keys);
+  public function deleteMultiple(array $keys);
+
 }

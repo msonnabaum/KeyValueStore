@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains KeyValueStore\Storage\JsonStorage.
+ */
+
 namespace KeyValueStore\Storage;
 
 class JsonStorage extends FileStorage {
@@ -15,3 +20,4 @@ class JsonStorage extends FileStorage {
     return json_decode($string, TRUE);
   }
 }
+

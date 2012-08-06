@@ -2,12 +2,10 @@
 
 /**
  * @file
- * Definition of FileBackend.
+ * Contains KeyValueStore\Storage\FileStorage.
  */
 
 namespace KeyValueStore\Storage;
-
-use Exception;
 
 /**
  * Defines a file based key/value store implementation.
@@ -37,7 +35,7 @@ class FileStorage implements StorageInterface {
    * @param array $options
    *   An associative array of session options
    */
-  public function __construct($collection, array $options = array()) {
+  public function __construct($collection, array $options) {
     $this->collection = $collection;
 
     $this->options = array_merge(array(
@@ -50,7 +48,6 @@ class FileStorage implements StorageInterface {
     $this->data = $this->loadFile($file);
     $this->mtime = $this->fileExists() ? filemtime($file) : NULL;
   }
-
 
   public function loadFile($file) {
     if ($this->fileExists()) {
@@ -148,7 +145,14 @@ class FileStorage implements StorageInterface {
   }
 
   /**
-   * Implements KeyValueStore\KeyValueStoreInterface::get().
+   * Implements KeyValueStore\Storage\StorageInterface::getCollectionName().
+   */
+  public function getCollectionName() {
+    return $this->collection;
+  }
+
+  /**
+   * Implements KeyValueStore\Storage\StorageInterface::get().
    */
   public function get($key) {
     $this->reload();
@@ -158,7 +162,7 @@ class FileStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::getMultiple().
    */
-  public function getMultiple($keys) {
+  public function getMultiple(array $keys) {
     $this->reload();
 
     $values = array();
@@ -168,6 +172,13 @@ class FileStorage implements StorageInterface {
       }
     }
     return $values;
+  }
+
+  /**
+   * Implements KeyValueStore\Storage\StorageInterface::getAll().
+   */
+  public function getAll() {
+    return $this->data;
   }
 
   /**
@@ -181,7 +192,7 @@ class FileStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::setMultiple().
    */
-  public function setMultiple($data) {
+  public function setMultiple(array $data) {
     foreach ($data as $key => $value) {
       $this->data[$key] = $value;
     }
@@ -199,10 +210,11 @@ class FileStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::deleteMultiple().
    */
-  public function deleteMultiple(Array $keys) {
+  public function deleteMultiple(array $keys) {
     foreach ($keys as $key) {
       unset($this->data[$key]);
     }
     return $this->writeFile();
   }
 }
+

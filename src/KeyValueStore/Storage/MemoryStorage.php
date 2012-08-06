@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of MemoryStorage.
+ * Contains KeyValueStore\Storage\MemoryStorage.
  */
 
 namespace KeyValueStore\Storage;
@@ -20,27 +20,41 @@ class MemoryStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::__construct().
    */
-  public function __construct($collection, array $parameters = array()) {
+  public function __construct($collection, array $options) {
     $this->collection = $collection;
     $this->data = array();
   }
 
   /**
+   * Implements KeyValueStore\Storage\StorageInterface::getCollectionName().
+   */
+  public function getCollectionName() {
+    return $this->collection;
+  }
+
+  /**
    * Implements KeyValueStore\Storage\StorageInterface::get().
    */
-  function get($key) {
+  public function get($key) {
     return isset($this->data[$key]) ? $this->data[$key] : FALSE;
   }
 
   /**
    * Implements KeyValueStore\Storage\StorageInterface::getMultiple().
    */
-  public function getMultiple($keys) {
+  public function getMultiple(array $keys) {
     $results = array();
     foreach ($keys as $key) {
       $results[$key] = $this->data[$key];
     }
     return $results;
+  }
+
+  /**
+   * Implements KeyValueStore\Storage\StorageInterface::getAll().
+   */
+  public function getAll() {
+    return $this->data;
   }
 
   /**
@@ -53,7 +67,7 @@ class MemoryStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::setMultiple().
    */
-  public function setMultiple($data) {
+  public function setMultiple(array $data) {
     $this->data = $data + $this->data;
   }
 
