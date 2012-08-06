@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains KeyValueStore\Storage\YamlStorage.
+ */
+
 namespace KeyValueStore\Storage;
 
 use Symfony\Component\Yaml\Parser;
@@ -10,7 +15,10 @@ class YamlStorage extends FileStorage {
   protected $parser;
   protected $dumper;
 
-  public function __construct($collection, array $options = array()) {
+  /**
+   * Implements KeyValueStore\Storage\StorageInterface::__construct().
+   */
+  public function __construct($collection, array $options) {
     $this->parser = new Parser();
     $this->dumper = new Dumper();
     parent::__construct($collection, $options);
@@ -28,3 +36,4 @@ class YamlStorage extends FileStorage {
     return $this->parser->parse($string);
   }
 }
+

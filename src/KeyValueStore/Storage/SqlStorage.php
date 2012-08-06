@@ -2,12 +2,10 @@
 
 /**
  * @file
- * Definition of DatabaseBackend.
+ * Contains KeyValueStore\Storage\DatabaseBackend.
  */
 
-namespace KeyValueStore;
-
-use Exception;
+namespace KeyValueStore\Storage;
 
 /**
  * Defines a default key/value store implementation.
@@ -25,8 +23,9 @@ class SqlStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::__construct().
    */
-  public function __construct($collection) {
+  public function __construct($collection, array $options) {
     $this->collection = $collection;
+    $this->table = isset($options['table']) ? $options['table'] : 'keyvalue';
   }
 
   protected function prepareKey($key) {
@@ -42,9 +41,16 @@ class SqlStorage implements StorageInterface {
   }
 
   /**
+   * Implements KeyValueStore\Storage\StorageInterface::getCollectionName().
+   */
+  public function getCollectionName() {
+    return $this->collection;
+  }
+
+  /**
    * Implements KeyValueStore\Storage\StorageInterface::get().
    */
-  function get($key) {
+  public function get($key) {
     $keys = $this->prepareKeys(array($key));
     $values = $this->getMultiple($keys);
     return reset($values);
@@ -53,7 +59,7 @@ class SqlStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::getMultiple().
    */
-  public function getMultiple($keys) {
+  public function getMultiple(array $keys) {
     $keys = $this->prepareKeys($keys);
     try {
       $result = db_query('SELECT name, value FROM {variable} WHERE name IN (:keys)', array(':keys' => $keys));
@@ -66,11 +72,26 @@ class SqlStorage implements StorageInterface {
       }
       return $values;
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       // If the database is never going to be available, key/value requests should
       // return FALSE in order to allow exception handling to occur.
       return array();
     }
+  }
+
+  /**
+   * Implements KeyValueStore\Storage\StorageInterface::getAll().
+   */
+  public function getAll() {
+    $result = db_query('SELECT name, value FROM {' . db_escape_table($this->table) . '} WHERE collection = :collection', array(':collection' => $this->collection));
+    $values = array();
+
+    foreach ($result as $item) {
+      if ($item) {
+        $values[$item->name] = unserialize($item->value);
+      }
+    }
+    return $values;
   }
 
   /**
@@ -84,7 +105,7 @@ class SqlStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::setMultiple().
    */
-  public function setMultiple($data) {
+  public function setMultiple(array $data) {
     foreach ($data as $key => $value) {
       $key = $this->prepareKey($key);
       $this->set($key, $value);
@@ -97,14 +118,14 @@ class SqlStorage implements StorageInterface {
   public function delete($key) {
     $key = $this->prepareKey($key);
     db_delete('variable')
-    ->condition('name', $key)
-    ->execute();
+      ->condition('name', $key)
+      ->execute();
   }
 
   /**
    * Implements KeyValueStore\Storage\StorageInterface::deleteMultiple().
    */
-  public function deleteMultiple(Array $keys) {
+  public function deleteMultiple(array $keys) {
     $keys = $this->prepareKeys($keys);
     // Delete in chunks when a large array is passed.
     do {
@@ -115,3 +136,4 @@ class SqlStorage implements StorageInterface {
     while (count($keys));
   }
 }
+

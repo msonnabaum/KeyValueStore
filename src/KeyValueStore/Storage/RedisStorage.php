@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of RedisStorage.
+ * Contains KeyValueStore\Storage\RedisStorage.
  */
 
 namespace KeyValueStore\Storage;
@@ -20,7 +20,7 @@ class RedisStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::__construct().
    */
-  public function __construct($collection, $options) {
+  public function __construct($collection, array $options) {
     $this->collection = $collection;
     $this->redis = new \Redis();
     // TODO: get this from $options.
@@ -29,19 +29,33 @@ class RedisStorage implements StorageInterface {
   }
 
   /**
+   * Implements KeyValueStore\Storage\StorageInterface::getCollectionName().
+   */
+  public function getCollectionName() {
+    return $this->collection;
+  }
+
+  /**
    * Implements KeyValueStore\Storage\StorageInterface::get().
    */
-  function get($key) {
+  public function get($key) {
     return $this->redis->hget($this->collection, $key);
   }
 
   /**
    * Implements KeyValueStore\Storage\StorageInterface::getMultiple().
    */
-  public function getMultiple($keys) {
+  public function getMultiple(array $keys) {
     $this->redis->hget($this->collection, $key);
     $results = $this->prepareKeys(array($key));
     return $results;
+  }
+
+  /**
+   * Implements KeyValueStore\Storage\StorageInterface::getAll().
+   */
+  public function getAll() {
+    return $this->redis->hget($this->collection);
   }
 
   /**
@@ -54,7 +68,7 @@ class RedisStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::setMultiple().
    */
-  public function setMultiple($data) {
+  public function setMultiple(array $data) {
     return $this->redis->hmset($this->collection, $key, $value);
   }
 
@@ -68,7 +82,7 @@ class RedisStorage implements StorageInterface {
   /**
    * Implements KeyValueStore\Storage\StorageInterface::deleteMultiple().
    */
-  public function deleteMultiple(Array $keys) {
+  public function deleteMultiple(array $keys) {
     $redis->multi(\Redis::PIPELINE);
     foreach ($keys as $key) {
       $this->redis->hdel($this->collection, $key);
@@ -76,3 +90,4 @@ class RedisStorage implements StorageInterface {
     return $redis->exec();
   }
 }
+

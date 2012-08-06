@@ -25,15 +25,15 @@ class FileStorageTest extends KeyValueTest {
   public function testFileDirectoryPathDefault() {
     $ext = $this->extension;
     $kv = $this->getStorage('foo');
-    $this->assertEquals($this->cwd . '/keyvalue', $kv->getDirectoryPath());
+    $this->assertEquals($this->cwd . DIRECTORY_SEPARATOR . 'keyvalue', $kv->getDirectoryPath());
     $this->assertEquals('foo.' . $ext, $kv->getFileName());
 
     $kv = $this->getStorage('foo:bar');
-    $this->assertEquals($this->cwd . '/keyvalue/foo', $kv->getDirectoryPath());
+    $this->assertEquals($this->cwd . DIRECTORY_SEPARATOR . 'keyvalue' . DIRECTORY_SEPARATOR . 'foo', $kv->getDirectoryPath());
     $this->assertEquals('bar.' . $ext, $kv->getFileName());
 
     $kv = $this->getStorage('foo:bar:baz');
-    $this->assertEquals($this->cwd . '/keyvalue/foo/bar', $kv->getDirectoryPath());
+    $this->assertEquals($this->cwd . DIRECTORY_SEPARATOR . 'keyvalue' . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'bar', $kv->getDirectoryPath());
     $this->assertEquals('baz.' . $ext, $kv->getFileName());
   }
 
@@ -47,18 +47,18 @@ class FileStorageTest extends KeyValueTest {
       'directory_name' => 'keyvaluefoo',
     );
 
-    $base = $opts['base_directory'] . '/' . $opts['directory_name'];
+    $base = $opts['base_directory'] . DIRECTORY_SEPARATOR  . $opts['directory_name'];
 
     $kv = $this->getStorage('foo', $opts);
     $this->assertEquals($base, $kv->getDirectoryPath());
     $this->assertEquals($kv->getFileName(), 'foo.' . $ext);
 
     $kv = $this->getStorage('foo:bar', $opts);
-    $this->assertEquals($base . '/foo', $kv->getDirectoryPath());
+    $this->assertEquals($base . DIRECTORY_SEPARATOR . 'foo', $kv->getDirectoryPath());
     $this->assertEquals($kv->getFileName(), 'bar.' . $ext);
 
     $kv = $this->getStorage('foo:bar:baz', $opts);
-    $this->assertEquals($base . '/foo/bar', $kv->getDirectoryPath());
+    $this->assertEquals($base . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'bar', $kv->getDirectoryPath());
     $this->assertEquals('baz.' . $ext, $kv->getFileName());
   }
 }

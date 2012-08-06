@@ -26,7 +26,7 @@ class KeyValueTest extends \PHPUnit_Framework_TestCase {
 
   public function getStorage($collection = NULL) {
     $collection = $collection ?: $this->collection;
-    return new MemoryStorage($collection);
+    return new MemoryStorage($collection, array());
   }
 
   /**

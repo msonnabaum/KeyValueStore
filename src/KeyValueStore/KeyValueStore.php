@@ -13,8 +13,8 @@ class KeyValueStore {
 
   protected $storage;
 
-  public function __construct(StorageInterface $storage, $collection) {
-    $this->collection = $collection;
+  public function __construct(StorageInterface $storage) {
+    $this->collection = $storage->getCollectionName();
     $this->storage = $storage;
   }
 
@@ -42,6 +42,10 @@ class KeyValueStore {
    */
   function getMultiple($keys) {
     return $this->storage->getMultiple($keys);
+  }
+
+  function getAll() {
+    return $this->storage->getAll();
   }
 
   /**
